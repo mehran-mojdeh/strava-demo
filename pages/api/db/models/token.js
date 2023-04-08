@@ -7,4 +7,4 @@ const TokenSchema = new mongoose.Schema({
   expires_at: Number
 })
 
-module.exports = mongoose.models.Token || mongoose.model('Token', TokenSchema)
+module.exports = mongoose.model('Token', TokenSchema)
