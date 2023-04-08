@@ -1,7 +1,7 @@
 import profiles from '../api/strava_modules/profile';
 import tokens from '../api/strava_modules/token_manager';
 
-export default function Profile({profile, activity}) {
+export default function Profile({profile/*, activity*/}) {
   return (
     <>
       <div className='px-6 pb-12'>
@@ -21,7 +21,7 @@ export default function Profile({profile, activity}) {
               {
                 Object.keys(profile).map((key) => {
                   return (
-                    <tr>
+                    <tr key={key}>
                       <td className='border border-current p-2'>{key}</td>
                       <td className='border border-current p-2'>{profile[key]}</td>
                     </tr>
@@ -75,10 +75,10 @@ export async function getServerSideProps({ params }) {
       throw new Error('Dashboard/[uids]: get profile data > '+ error)
     })
 
-  const token = await tokens.get(uid)
-    .catch((error) => {
-      throw new Error('Dashboard/[uids]: get token > '+ error)
-    })
+  // const token = await tokens.get(uid)
+  //   .catch((error) => {
+  //     throw new Error('Dashboard/[uids]: get token > '+ error)
+  //   })
   // const headers = { 'Authorization': `Bearer ${token.access_token}` }
   // const activity = await fetch("https://www.strava.com/api/v3/athlete/activities?per_page=1", {headers})
   //   .then((data) => {
