@@ -1,6 +1,7 @@
 import Head from 'next/head'
 const client_id = 103334;
 const redirect_uri = "http://localhost:3000/api/strava/oauth" 
+// const redirect_uri = "https://nooyanclub.ir/api/strava/oauth" 
 const scope = "read_all,activity:read_all,profile:read_all"
 const strava_oauth = `http://www.strava.com/oauth/authorize?client_id=${client_id}&response_type=code&redirect_uri=${redirect_uri}&approval_prompt=force&scope=${scope}`
 export default function Home() {
