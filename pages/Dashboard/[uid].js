@@ -1,13 +1,14 @@
 import profiles from '../api/strava_modules/profile';
 import tokens from '../api/strava_modules/token_manager';
 
+
 export default function Profile({profile, activity}) {
   return (
     <>
       <div className='px-6 pb-12'>
         <h1>Dashboard</h1>
         <div className='container mx-auto'>
-          <table className='table-fixed border border-collapse border-current bg-orange-200'>
+          <table className='table-auto w-full border border-collapse border-current bg-orange-200'>
             <caption className="caption-top">
               Profile
             </caption>
@@ -31,33 +32,31 @@ export default function Profile({profile, activity}) {
             </tbody>
           </table>
         </div>
-        <div className='container mx-auto'>
-          
-          <table className='table-fixed border border-collapse border-current bg-orange-200'>
-            <caption className="caption-top">
-              Last activity
-            </caption>
-            <thead>
-              <tr className='bg-orange-300'>
-                <td className='border border-current p-2 text-xs'>Key</td>
-                <td className='border border-current p-2 text-xs'>Value</td>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                console.log(activity)
-
-                // Object.keys(activity).map((key) => {
-                //   return (
-                //     <tr key={key}>
-                //       <td className='border border-current p-2'>{key}</td>
-                //       <td className='border border-current p-2'>{profile[key]}</td>
-                //     </tr>
-                //   )
-                // })
-              }
-            </tbody>
-          </table>
+        <div className='container mx-auto pt-6'>
+        <table className='table-auto w-full border border-collapse border-current bg-orange-200'>
+          <caption className="caption-top">
+            Last Activity
+          </caption>
+          <thead>
+            <tr className='bg-orange-300'>
+              <td className='border border-current p-2 text-xs'>Key</td>
+              <td className='border border-current p-2 text-xs'>Value</td>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              Object.keys(activity).map((key) => {
+                return (
+                  <tr key={key}>
+                    <td className='border border-current p-2'>{key}</td>
+                    <td className='border border-current p-2'>{JSON.stringify(activity[key]).slice(0,70)}</td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+        </table>
+              
         </div>
       </div>
 
@@ -83,12 +82,12 @@ export async function getServerSideProps({ params }) {
     })
   const headers = { 'Authorization': `Bearer ${token.access_token}` }
   const activity = await fetch("https://www.strava.com/api/v3/athlete/activities?per_page=1", {headers})
-    .then((data) => {
+    .then(async (data) => {
       console.log('fetch')
-      console.dir(data);
-      if(data.length)
-        return data.json()[0]
-      else return null
+      const activities = await data.json()
+      console.dir(activities[0]);
+      return JSON.parse(JSON.stringify(activities[0]))
+      // else return null
     })
     .catch((error) => {
       throw new Error('Dashboard/[uids]: fetch activities > '+ error)
