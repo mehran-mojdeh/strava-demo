@@ -5,7 +5,8 @@ export default async function token_exchange( code, scope ) {
   if(!code)
     throw new Error('Token Exchange: Input > Missing Code.')
   if(scope!=='read,read_all')
-    throw new Error('Token Exchange: Input > Incorrect Scope.')
+    console.log('scope:', scope);
+    // throw new Error('Token Exchange: Input > Incorrect Scope.')
 
   try {
     const token = await token_manager.get()

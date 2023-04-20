@@ -1,14 +1,14 @@
 import profiles from '../api/strava_modules/profile';
 import tokens from '../api/strava_modules/token_manager';
 
-export default function Profile({profile/*, activity*/}) {
+export default function Profile({profile, activity}) {
   return (
     <>
       <div className='px-6 pb-12'>
         <h1>Dashboard</h1>
         <div className='container mx-auto'>
           <table className='table-fixed border border-collapse border-current bg-orange-200'>
-            <caption class="caption-top">
+            <caption className="caption-top">
               Profile
             </caption>
             <thead>
@@ -33,8 +33,8 @@ export default function Profile({profile/*, activity*/}) {
         </div>
         <div className='container mx-auto'>
           
-          {/* <table className='table-fixed border border-collapse border-current bg-orange-200'>
-            <caption class="caption-top">
+          <table className='table-fixed border border-collapse border-current bg-orange-200'>
+            <caption className="caption-top">
               Last activity
             </caption>
             <thead>
@@ -45,9 +45,11 @@ export default function Profile({profile/*, activity*/}) {
             </thead>
             <tbody>
               {
+                console.log(activity)
+
                 // Object.keys(activity).map((key) => {
                 //   return (
-                //     <tr>
+                //     <tr key={key}>
                 //       <td className='border border-current p-2'>{key}</td>
                 //       <td className='border border-current p-2'>{profile[key]}</td>
                 //     </tr>
@@ -55,7 +57,7 @@ export default function Profile({profile/*, activity*/}) {
                 // })
               }
             </tbody>
-          </table> */}
+          </table>
         </div>
       </div>
 
@@ -75,23 +77,26 @@ export async function getServerSideProps({ params }) {
       throw new Error('Dashboard/[uids]: get profile data > '+ error)
     })
 
-  // const token = await tokens.get(uid)
-  //   .catch((error) => {
-  //     throw new Error('Dashboard/[uids]: get token > '+ error)
-  //   })
-  // const headers = { 'Authorization': `Bearer ${token.access_token}` }
-  // const activity = await fetch("https://www.strava.com/api/v3/athlete/activities?per_page=1", {headers})
-  //   .then((data) => {
-  //     console.log('fetch',data);
-  //     return data.json()[0]
-  //   })
-  //   .catch((error) => {
-  //     throw new Error('Dashboard/[uids]: fetch activities > '+ error)
-  //   })
+  const token = await tokens.get(uid)
+    .catch((error) => {
+      throw new Error('Dashboard/[uids]: get token > '+ error)
+    })
+  const headers = { 'Authorization': `Bearer ${token.access_token}` }
+  const activity = await fetch("https://www.strava.com/api/v3/athlete/activities?per_page=1", {headers})
+    .then((data) => {
+      console.log('fetch')
+      console.dir(data);
+      if(data.length)
+        return data.json()[0]
+      else return null
+    })
+    .catch((error) => {
+      throw new Error('Dashboard/[uids]: fetch activities > '+ error)
+    })
   return {
     props: {
       profile,
-      // activity
+      activity
     }
   }
 }
