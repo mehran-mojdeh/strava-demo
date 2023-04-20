@@ -1,8 +1,9 @@
 import profiles from '../api/strava_modules/profile';
 import tokens from '../api/strava_modules/token_manager';
 
+import ActivityTable from '../../components/ActivityTable';
 
-export default function Profile({profile, activity}) {
+export default function Profile({profile, activities}) {
   return (
     <>
       <div className='px-6 pb-12'>
@@ -32,32 +33,13 @@ export default function Profile({profile, activity}) {
             </tbody>
           </table>
         </div>
-        <div className='container mx-auto pt-6'>
-        <table className='table-auto w-full border border-collapse border-current bg-orange-200'>
-          <caption className="caption-top">
-            Last Activity
-          </caption>
-          <thead>
-            <tr className='bg-orange-300'>
-              <td className='border border-current p-2 text-xs'>Key</td>
-              <td className='border border-current p-2 text-xs'>Value</td>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              Object.keys(activity).map((key) => {
-                return (
-                  <tr key={key}>
-                    <td className='border border-current p-2'>{key}</td>
-                    <td className='border border-current p-2'>{JSON.stringify(activity[key]).slice(0,70)}</td>
-                  </tr>
-                )
-              })
-            }
-          </tbody>
-        </table>
-              
-        </div>
+        {
+          activities.map((activity) => {
+            return (
+              <ActivityTable key={activity.id} activity={activity} />
+            )
+          })
+        }
       </div>
 
 
@@ -81,12 +63,13 @@ export async function getServerSideProps({ params }) {
       throw new Error('Dashboard/[uids]: get token > '+ error)
     })
   const headers = { 'Authorization': `Bearer ${token.access_token}` }
-  const activity = await fetch("https://www.strava.com/api/v3/athlete/activities?per_page=1", {headers})
+  const activities = await fetch("https://www.strava.com/api/v3/athlete/activities?per_page=10", {headers})
     .then(async (data) => {
-      console.log('fetch')
-      const activities = await data.json()
-      console.dir(activities[0]);
-      return JSON.parse(JSON.stringify(activities[0]))
+      // console.log('fetch')
+      const actvts = await data.json()
+      // console.dir(activities[0]);
+      // return JSON.parse(JSON.stringify(activities[0]))
+      return actvts
       // else return null
     })
     .catch((error) => {
@@ -95,7 +78,7 @@ export async function getServerSideProps({ params }) {
   return {
     props: {
       profile,
-      activity
+      activities
     }
   }
 }
